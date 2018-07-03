@@ -1,0 +1,16 @@
+# Folder attributes
+.DS_Store
+
+# History files
+.Rhistory
+
+# Project files
+.Rproj.user/
+data-compression.Rproj
+
+# Data
+data/
+data_ncdf/
+data_raw/
+models/
+plots/
