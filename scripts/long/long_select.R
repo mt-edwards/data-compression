@@ -13,7 +13,7 @@ args = commandArgs(TRUE)
 # Libraries.
 # =======================
 package_names = c("purrr", "plyr")
-invisible(lapply(package_names, library, character.only = TRUE))
+lapply(package_names, library, character.only = TRUE)
 
 # Set Working Directory (bash scripts).
 # ========================
