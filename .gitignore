@@ -14,3 +14,4 @@ data_ncdf/
 data_raw/
 models/
 plots/
+.Rproj.user
