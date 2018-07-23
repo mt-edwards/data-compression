@@ -34,7 +34,7 @@ beta_mix = function(f, par) {
 spec_Matern = function(pars, fun){
   
   # Return Matern spectral density.
-  return((exp(pars[1]) ^ 2 + 4 * fun) ^ -(exp(pars[2]) + 0.5))
+  return((exp(2 * pars[1]) + 4 * fun) ^ -(exp(pars[2]) + 0.5))
   
 }
 

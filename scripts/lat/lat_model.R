@@ -31,7 +31,7 @@ load(paste0("data/", args[1], "/nspec.r", args[2], ".p", args[3], ".q", args[4],
 # Latitudinal model fitting.
 # ========================
 cl = makeCluster(detectCores() - 1)
-clusterExport(cl, list("nspec", "lat_neg_log_like", "quad_form"))
+clusterExport(cl, list("lat_neg_log_like", "quad_form"))
 if (args[5] == "s") lat_model = lat_fit(nspec)
 if (args[5] == "n") lat_model = lapply(lat_pairs(nspec), lat_fit)
 stopCluster(cl)

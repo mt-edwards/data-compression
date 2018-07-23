@@ -11,11 +11,10 @@
 # - 6) Stationary.
 # - 7) Taper.
 args = commandArgs(TRUE)
-args = c("FLNS", "TMQ", 5, 3, 0, "n", 10)
 
 # Libraries.
 # ========================
-package_names = c("tidyverse", "abind", "parallel")
+package_names = c("tidyverse", "abind", "parallel", "complexplus")
 lapply(package_names, library, character.only = TRUE)
 
 # Set Working Directory (bash scripts).
@@ -33,7 +32,7 @@ utdnspec2 = get(load(paste0("data/", args[2], "/utdnspec.r", args[3], ".p", args
 
 # Concatinate arrays.
 # ========================
-utdnspec = abind(utdnspec1, utdnspec2, rev.along = 0); rm(utdnspec1, utdnspec2)
+utdnspec = abind(utdnspec1, utdnspec2, rev.along = 0)
 
 # Multivarite model fitting.
 # ========================
@@ -42,7 +41,11 @@ clusterExport(cl, list("multi_neg_log_like", "quad_form"))
 multi_model = multi_fit(utdnspec)
 stopCluster(cl)
 
+# plot(Arg(apply(Conj(utdnspec[, , , , 1]) * utdnspec[, , , , 2], 3, mean)))
+# lines(Arg(csm_fun(multi_model$par, 0:287, 288)))
+# plot(Mod(apply(Conj(utdnspec[, , , , 1]) * utdnspec[, , , , 2], 3, mean)))
+# lines(Mod(csm_fun(multi_model$par, 0:287, 288)))
+
 # Clear workspace.
 # ========================
 rm(list = ls())
-

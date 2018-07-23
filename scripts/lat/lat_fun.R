@@ -35,10 +35,10 @@ quad_form = function(x, Rinv) {
 lat_neg_log_like = function(X, Rinvs, LD) {
   
   # Quadratic form.
-  quad_form = sum(sapply(seq_along(Rinvs), function(i) quad_form(X[i, ], Rinvs[[i]])))
+  QF = sum(sapply(seq_along(Rinvs), function(i) quad_form(X[i, ], Rinvs[[i]])))
   
   # Negative log-likelhood.
-  return(LD + 0.5 * quad_form)
+  return(LD + 0.5 * QF)
   
 }
 
@@ -51,10 +51,7 @@ full_lat_neg_log_like = function(par, nspec) {
   
   # Log-determinant.
   LD = sum(sapply(Rinvs, function(Rinv) log(1 / prod(diag(Rinv)))))
-  
-  # Force evaluation.
-  nspec = nspec; Rinvs = Rinvs; LD = LD
-  
+
   # Cluster computation.
   return(sum(parApply(cl, nspec, 1:2, function(X) lat_neg_log_like(X, Rinvs, LD))))
   
@@ -91,6 +88,7 @@ spec_con = function(spec) {
 # ========================
 lat_cpgram = function(spec) {
   
+  # Return cross-periodogram.
   return(spec[1, ] * Conj(spec[2, ]))
   
 } 

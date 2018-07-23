@@ -6,8 +6,12 @@
 # ========================
 multi_pgram = function(dnspec1, dnspec2) {
   
-  # Return multivariate cross-spectra.
-  return(Mod(apply(dnspec1 * Conj(dnspec2), 3, mean)))
+  # Multivariate cross-periodogram.
+  mcpg = apply(Conj(dnspec1) * dnspec2, 3, mean)
+  
+  # Return modulus and arument.
+  return(list(modulus  = Mod(mcpg),
+              argument = Arg(mcpg)))
   
 }
 
@@ -37,7 +41,8 @@ unscaled_spec = function(dnspec) {
 csm_fun = function(pars, c, L){
   
   # Cross-spectral mass function.
-  return(exp(pars[1]) * (exp(pars[2]) + 4 * sin(pi * c / L) ^ 2) ^ -exp(pars[3]))
+  return(complex(modulus  = plogis(pars[1]) * (exp(2 * pars[2]) + 4 * sin(pi * c / L) ^ 2) ^ -exp(pars[3]), 
+                 argument = plogis(pars[4]) * 2 * pi))
   
 }
 
@@ -45,8 +50,11 @@ csm_fun = function(pars, c, L){
 # ========================
 csm_matrix = function(pars, c, L){
   
+  # Spectral mass.
+  csm = csm_fun(pars, c, L)
+  
   # Cross-spectral mass function.
-  return(csm_fun(pars, c, L) ^ matrix(c(0, 1, 1, 0), 2, 2))
+  return(matrix(c(1, Conj(csm), csm, 1), 2, 2))
   
 }
 
@@ -55,47 +63,42 @@ csm_matrix = function(pars, c, L){
 multi_fit = function(utdnspec) {
   
   # Return latitudinal model fit.
-  return(optim(par = c(0, 0.4, 0.25), fn = full_multi_neg_log_like, utdnspec = utdnspec, method = "Nelder-Mead"))
+  return(optim(rep(0, 4), fn = full_multi_neg_log_like, utdnspec = utdnspec, method = "Nelder-Mead"))
   
 }
 
 # Full multivariate negative log-likelihood.
 # =======================
-full_multi_neg_log_like = function(par, utdnspec) {
+full_multi_neg_log_like = function(pars, utdnspec) {
 
-  # Invesre Cholesky factors.
-  Rinvs  = lapply(seq_len(dim(utdnspec)[3]), function(c) solve(chol(csm_matrix(par, c - 1, dim(utdnspec)[3]))))
+  # Covariance matrices.
+  Cs = lapply(seq_len(dim(utdnspec)[3]), function(c) csm_matrix(pars, c - 1, dim(utdnspec)[3]))
   
-  # Log-determinant.
-  LD = sum(sapply(Rinvs, function(Rinv) log(1 / prod(diag(Rinv)))))
-  
-  # Force evaluation.
-  utdnspec = utdnspec; Rinvs = Rinvs; LD = LD
+  # Inverse matrices and log-determinant.
+  Is  = lapply(Cs, solve); LD = log(prod(sapply(Cs, Det)))
   
   # Cluster computation.
-  return(sum(parApply(cl, utdnspec, c(1:2, 4), function(X) multi_neg_log_like(X, Rinvs, LD))))
+  return(sum(parApply(cl, utdnspec, c(1:2, 4), function(X) multi_neg_log_like(X, Is, LD))))
   
 }
 
 # Multivariate negative log-likelihood.
 # =======================
-multi_neg_log_like = function(X, Rinvs, LD) {
+multi_neg_log_like = function(X, Is, LD) {
   
   # Quadratic form.
-  quad_form = sum(sapply(seq_along(Rinvs), function(i) quad_form(X[i, ], Rinvs[[i]])))
+  QF = sum(sapply(seq_along(Is), function(i) quad_form(X[i, ], Is[[i]])))
   
   # Negative log-likelhood.
-  return(LD + 0.5 * quad_form)
+  return(0.5 * LD + 0.5 * QF)
   
 }
 
 # Quadratic form.
 # =======================
-quad_form = function(x, Rinv) {
+quad_form = function(x, I) {
   
   # Return negative log-likelihood.
-  return(sum(Mod(crossprod(Rinv, x)) ^ 2))
+  return(Re(crossprod(Conj(crossprod(Conj(I), x)), x)))
   
 }
-
-

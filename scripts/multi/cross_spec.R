@@ -37,23 +37,23 @@ mcpgram = multi_pgram(utdnspec1, utdnspec2)
 
 # Mean multivariate cross-periodogram data frame.
 # ========================
-mcpgram_df = tibble(Frequency = 0:(dim(utdnspec1)[3] - 1) / dim(utdnspec1)[3],
-                     Spectra   = mcpgram)
+mcpgram_df = tibble(Frequency = rep(0:(dim(utdnspec1)[3] - 1) / dim(utdnspec1)[3], 2),
+                    Value     = unlist(mcpgram),
+                    Type      = rep(c("Modulus", "Argument"), each = dim(utdnspec1)[3]))
 
 # Mean multivariate cross-periodogram plot.
 # ========================
-ggplot(mcpgram_df, aes(x = Frequency, y = Spectra)) +
+ggplot(mcpgram_df, aes(x = Frequency, y = Value)) +
   geom_point(col = "blue", shape = 1) +
-  geom_smooth(col = "red", se = FALSE, span = 0.2) +
+  facet_grid(Type ~ ., scales = "free") +
   scale_x_continuous(limits = c(0, 0.5)) +
-  ylab("Cross-spectra") +
   labs(main = "Test") +
   ggtitle(paste(args[1], args[2], sep = " - ")) +
   theme_bw()
 
 # Save plot.
 # ========================
-ggsave(paste0("mcpgram_plot.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".png"), path = paste0("plots/ALL"), width = 8, height = 8, units = "cm")
+ggsave(paste0("mcpgram_plot.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".png"), path = paste0("plots/ALL"), width = 6, height = 8, units = "cm")
 
 # Clear workspace.
 # ========================
