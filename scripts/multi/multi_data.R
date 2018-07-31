@@ -1,5 +1,5 @@
 ##########################
-# Multivariate Model.    #
+# Multivariate Data.    #
 ##########################
 
 # =======================
@@ -27,23 +27,16 @@ source("scripts/multi/multi_fun.R")
 
 # Load files.
 # ========================
-utdnspec1 = get(load(paste0("data/", args[1], "/utdnspec.r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".R")))
-utdnspec2 = get(load(paste0("data/", args[2], "/utdnspec.r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".R")))
+load(paste0("data/", args[1], "/utdnspec.r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".R"))
+load(paste0("models/ALL/multi_model.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".R"))
 
-# Concatinate arrays.
+# Multivariate cross-spectral mass function.
 # ========================
-utdnspec = abind(utdnspec1, utdnspec2, rev.along = 0)
-
-# Multivarite model fitting.
-# ========================
-cl = makeCluster(detectCores() - 1)
-clusterExport(cl, list("multi_neg_log_like", "quad_form"))
-multi_model = multi_fit(utdnspec)
-stopCluster(cl)
+mcsmf = csm_fun(multi_model$par, seq_len(dim(utdnspec)[3]) - 1, dim(utdnspec)[3])
 
 # Save files.
 # ========================
-save(multi_model, file = paste0("models/ALL/multi_model.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".R"))
+save(mcsmf, file = paste0("data/ALL/mcsmf.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".R"))
 
 # Clear workspace.
 # ========================
