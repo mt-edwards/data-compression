@@ -67,8 +67,8 @@ spec = aaply(nspec, 1:2, function(X) X * sqrt(smf))
 
 # Inverse Fourier transform innoations.
 # ========================
-D = aperm(aaply(spec, c(1, 2, 4, 5), inverse_nfft), c(1, 2, 5, 3, 4))
+resid = aperm(aaply(spec, c(1, 2, 4, 5), inverse_nfft), c(1, 2, 5, 3, 4))
 
 
-save(D, file = "D.R")
-load("nspec.R")
+save(resid, file = "resid.R")
+load("resid.R")
