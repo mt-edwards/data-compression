@@ -30,18 +30,18 @@ source("scripts/sim/sim_fun.R")
 # Load files.
 # ========================
 load(paste0("data/ALL/mcsmf.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".R"))
-csmf1 = get(load(paste0("data/", args[1], "/csmf.r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".R")))
-csmf2 = get(load(paste0("data/", args[2], "/csmf.r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".R")))
+coh1 = get(load(paste0("data/", args[1], "/coh.r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".R")))
+coh2 = get(load(paste0("data/", args[2], "/coh.r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".R")))
 smf1 = get(load(paste0("data/", args[1], "/smf.r", args[3], ".p", args[4], ".q", args[5], ".R")))
 smf2 = get(load(paste0("data/", args[2], "/smf.r", args[3], ".p", args[4], ".q", args[5], ".R")))
 temp_model1 = get(load(paste0("models/", args[1], "/temp_model.r", args[3], ".p", args[4], ".q", args[5], ".R")))
-temp_model2 = get(load(paste0("models/", args[1], "/temp_model.r", args[3], ".p", args[4], ".q", args[5], ".R"))); rm(temp_model)
+temp_model2 = get(load(paste0("models/", args[2], "/temp_model.r", args[3], ".p", args[4], ".q", args[5], ".R"))); rm(temp_model)
 M1 = get(load(paste0("data/", args[1], "/M.r", args[3], ".R")))
 M2 = get(load(paste0("data/", args[2], "/M.r", args[3], ".R")))
 
 # Concatinate files.
 # ========================
-csmf = abind(csmf1, csmf2, rev.along = 0); rm(csmf1, csmf2)
+coh = abind(coh1, coh2, rev.along = 0); rm(coh1, coh2)
 smf = abind(smf1, smf2, rev.along = 0); rm(smf1, smf2)
 M = abind(M1, M2, rev.along = 0); rm(M1, M2)
 
@@ -51,7 +51,7 @@ Rs = lapply(mcsmf, compose(cplx_sqrt, csm_matrix))
 
 # List of cross-spectral innovations.
 # ========================
-dnspec_list = lapply(Rs, mvn_sim_array, dims = c(5, 95, 192))
+dnspec_list = lapply(Rs, mvn_sim_array, dims = c(3, dim(M)[c(1, 3)]))
 
 # Array of cross-spectral innovations.
 # ========================
@@ -59,9 +59,9 @@ dnspec = aperm(abind(dnspec_list, along = 0), c(3, 4, 1, 5, 2))
 
 # Trended cross-spectral innnovations.
 # ========================
-nspec = aaply(dnspec, 1:2, lat_trend_array, Phi = csmf)
+nspec = aperm(aaply(dnspec, 1:2, lat_trend_array, Phi = coh, .progress = "text"), c(1, 2, 4, 3, 5))
 
-# Unnormalize cross-spectral innovations.
+# Unnormalised cross-spectral innovations.
 # ========================
 spec = aaply(nspec, 1:2, function(X) X * sqrt(smf))
 
@@ -69,6 +69,41 @@ spec = aaply(nspec, 1:2, function(X) X * sqrt(smf))
 # ========================
 resid = aperm(aaply(spec, c(1, 2, 4, 5), inverse_nfft), c(1, 2, 5, 3, 4))
 
+# Trended innovations.
+# ========================
+D = aaply(resid, 3:5, temp_trend, .progress = "text")
 
+
+
+# Test indexes.
+r.ind = 1; t.ind = 30; n.ind = 20; m.ind = 50; v.ind = 1
+
+# dnspec_list test.
+mcsmf[n.ind]
+mean(dnspec_list[[n.ind]][1, , , ] * Conj(dnspec_list[[n.ind]][2, , , ]))
+
+# dnspec test.
+plot(mcsmf, type = "l")
+points(aaply(dnspec, 3, function(X) mean(X[, , , 1] * Conj(X[, , , 2]))))
+
+# nspec test.
+plot(coh[, m.ind, v.ind], type = "l")
+points(apply(nspec, 3, function(X) mean(X[, , m.ind, v.ind] * Conj(X[, , m.ind + 1, v.ind]))))
+
+# spec test.
+plot(smf[, m.ind, v.ind], type = "l", log = "y")
+points(apply(spec, 3, function(X) mean(X[, , m.ind, v.ind] * Conj(X[, , m.ind, v.ind]))))
+
+
+
+
+# Save and load files.
+# ========================
+save(dnspec, file = "dnspec.R")
+load("dnspec.R")
+save(nspec, file = "nspec.R")
+load("nspec.R")
+save(spec, file = "spec.R")
+load("spec.R")
 save(resid, file = "resid.R")
 load("resid.R")

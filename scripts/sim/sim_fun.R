@@ -39,12 +39,22 @@ mvn_sim_array = function(dims, R) {
 
 # Latitudinal trending.
 lat_trend = function(phi_x) {
-
-  # Create list.
-  lst = alply(matrix(c(0, phi_x), ncol = 2), 1, rev)
   
-  # Return trended data.
-  return(sapply(accumulate(lst, ~ c(.y[1] + .y[2] * .x[1], 0)), first))
+  # phi_x matrix.
+  PHI_X = matrix(c(NA, phi_x), ncol = 2)
+  
+  # Trended latitudes
+  y = PHI_X[, 2]
+  
+  # Trending latitudes.
+  for (i in 2:nrow(PHI_X)) {
+    
+    y[i] = PHI_X[i, 2] * sqrt(1 - PHI_X[i, 1] ^ 2) + PHI_X[i, 1] * y[i - 1]
+    
+  }
+  
+  # Return trended latitudes.
+  return(y)
   
 }
 
@@ -52,7 +62,7 @@ lat_trend = function(phi_x) {
 lat_trend_array = function(Phi, X) {
   
   # Return trended array data.
-  return(aperm(apply(abind(Phi, X, along = 2), c(1, 3), lat_trend), c(2, 1, 3)))
+  return(apply(abind(Phi, X, along = 2), c(1, 3), lat_trend))
     
 }
 
@@ -66,7 +76,7 @@ inverse_nfft = function(spec) {
 
 # # C matrix.
 # C = csm_matrix(complex(modulus = 0.8, argument = 1))
-# all.equal(complex(modulus = 0.8, argument = 4), C[1, 2])
+# all.equal(complex(modulus = 0.8, argument = 1), C[1, 2])
 # 
 # # R matrix
 # R = cplx_sqrt(C)
@@ -79,3 +89,7 @@ inverse_nfft = function(spec) {
 # # A matrix.
 # A = mvn_sim_array(rep(100, 3), R)
 # all.equal(mean(A[1, , , ] * Conj(A[2, , , ])), complex(modulus = 0.8, argument = 1))
+# 
+# # y vector.
+# y = lat_trend(c(rep(0.54, 1e5 - 1), rnorm(1e5)))
+# all.equal(arima(y, order = c(1, 0, 0), include.mean = FALSE)$coef, 0.54)
