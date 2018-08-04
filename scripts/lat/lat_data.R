@@ -55,6 +55,7 @@ mcpgram = apply(apply(aaply(apply(spec, 3:4, c), 1, spec_con), c(1, 4), lat_cpgr
 
 # Save files.
 # =======================
+save(coh, file = paste0("data/", args[1], "/coh.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".R"))
 save(csmf, file = paste0("data/", args[1], "/csmf.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".R"))
 save(dnspec, file = paste0("data/", args[1], "/dnspec.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".R"))
 save(mcpgram, file = paste0("data/", args[1], "/mcpgram.r", args[2], ".p", args[3], ".q", args[4], ".R"))
