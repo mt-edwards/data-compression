@@ -55,7 +55,7 @@ dnspec_list = lapply(Rs, mvn_sim_array, dims = c(3, dim(M)[c(1, 3)]))
 
 # Array of cross-spectral innovations.
 # ========================
-dnspec = aperm(abind(dnspec_list, along = 0), c(3, 4, 1, 5, 2))
+dnspec = aperm(aaply(abind(dnspec_list, along = 0), 2:5, make_real), c(2, 3, 5, 4, 1))
 
 # Trended cross-spectral innnovations.
 # ========================
@@ -71,8 +71,11 @@ resid = aperm(aaply(spec, c(1, 2, 4, 5), inverse_nfft), c(1, 2, 5, 3, 4))
 
 # Trended innovations.
 # ========================
-D = aaply(resid, 3:5, temp_trend, .progress = "text")
+D = aaply(resid, 3:5, temp_trend_array, .progress = "text")
 
+# Complete data.
+# ========================
+Y = aaply(D, 1, function(d) d + M)
 
 
 # Test indexes.
@@ -94,6 +97,8 @@ points(apply(nspec, 3, function(X) mean(X[, , m.ind, v.ind] * Conj(X[, , m.ind +
 plot(smf[, m.ind, v.ind], type = "l", log = "y")
 points(apply(spec, 3, function(X) mean(X[, , m.ind, v.ind] * Conj(X[, , m.ind, v.ind]))))
 
+# resid test.
+all.equal(c(Im(resid)), rep(0, length(resid)))
 
 
 
