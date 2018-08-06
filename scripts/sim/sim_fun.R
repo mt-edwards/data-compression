@@ -2,6 +2,14 @@
 # Simulation functions. #
 ##########################
 
+# Convert model to vector.
+mod_2_vec = function(mod, args) {
+  
+  # Return model as vector.
+  return(unname(c(mod$sigma2, mod$coef, rep(NA, as.numeric(args[4]) - length(mod$coef)))))
+  
+}
+
 # Cross-spectral mass matrix.
 csm_matrix = function(csm) {
   
@@ -86,18 +94,21 @@ inverse_nfft = function(spec) {
 temp_trend = function(mod, innov) {
   
   # Return trended data.
-  return(arima.sim(list(ar = mod[[1]]$coef), n = length(innov), innov = innov * sqrt(mod[[1]]$sigma2)))
+  return(arima.sim(list(ar = na.omit(mod[-1])), n = length(innov), innov = innov * sqrt(mod[1])))
   
 }
 
 # Temporal array trending.
-temp_trend_array = function(mod, innov) {
+temp_trend_array = function(X, args) {
+  
+  # Matrix commponents.
+  mod = X[1, 1:(as.numeric(args[4]) + 1)]
+  innov = X[, (as.numeric(args[4]) + 2):ncol(X)]
   
   # Return trended array data.
   return(matrix(temp_trend(mod, c(t(innov))), nrow = nrow(innov), ncol = ncol(innov), byrow = TRUE))
   
 }
-
 
 # # C matrix.
 # C = csm_matrix(complex(modulus = 0.8, argument = 1))
