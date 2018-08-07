@@ -15,8 +15,3 @@ data_raw/
 models/
 plots/
 .Rproj.user
-D.R
-spec.R
-nspec.R
-resid.R
-dnspec.R

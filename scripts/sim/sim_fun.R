@@ -109,23 +109,3 @@ temp_trend_array = function(X, args) {
   return(matrix(temp_trend(mod, c(t(innov))), nrow = nrow(innov), ncol = ncol(innov), byrow = TRUE))
   
 }
-
-# # C matrix.
-# C = csm_matrix(complex(modulus = 0.8, argument = 1))
-# all.equal(complex(modulus = 0.8, argument = 1), C[1, 2])
-# 
-# # R matrix
-# R = cplx_sqrt(C)
-# all.equal(R %*% Conj(t(R)), C)
-# 
-# # X matrix.
-# X = mvn_sim(1e6, R)
-# all.equal(X %*% Conj(t(X)) / ncol(X), C)
-# 
-# # A matrix.
-# A = mvn_sim_array(rep(100, 3), R)
-# all.equal(mean(A[1, , , ] * Conj(A[2, , , ])), complex(modulus = 0.8, argument = 1))
-# 
-# # y vector.
-# y = lat_trend(c(rep(0.54, 1e5 - 1), rnorm(1e5)))
-# all.equal(arima(y, order = c(1, 0, 0), include.mean = FALSE)$coef, 0.54)
