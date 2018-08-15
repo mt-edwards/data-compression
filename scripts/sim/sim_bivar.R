@@ -83,7 +83,7 @@ Y = aaply(D, 1, function(X) X + M)
 
 # Save simulated ensemble.
 # ========================
-save(Y, file = paste0(paste0("data/ALL/Y.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".s", args[8], ".R")))
+save(Y, file = paste0("data/ALL/Y.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".", args[6], ".t", args[7], ".s", args[8], ".R"))
 
 # Clear workspace.
 # ========================
