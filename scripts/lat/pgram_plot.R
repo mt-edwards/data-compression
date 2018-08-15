@@ -44,7 +44,7 @@ pgram_df = tibble(Periodogram  = as.vector(cbind(mpgram[, indx], mcpgram[, indx]
 
 # Periodogram plot.
 # ========================
-ggplot(pgram_df, aes(x = Frequency)) +
+g = ggplot(pgram_df, aes(x = Frequency)) +
   geom_point(aes(y = Mod(Periodogram)), col = "blue", shape = 1) +
   geom_line(aes(y = SMF), col = "red", lwd = 1.1) +
   facet_grid(Type ~ Location, scales = "free_y") +
@@ -56,7 +56,9 @@ ggplot(pgram_df, aes(x = Frequency)) +
 
 # Save plot.
 # ========================
-ggsave(paste0("pgram_plots.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".png"), path = paste0("plots/", args[1]), width = 15, height = 8, units = "cm")
+ggsave(paste0("pgram_plots.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".png"), 
+              plot = g, path = paste0("plots/", args[1]),
+              width = 15, height = 8, units = "cm")
 
 # Clear workspace.
 # ========================
