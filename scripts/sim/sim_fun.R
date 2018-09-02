@@ -3,10 +3,10 @@
 ##########################
 
 # Convert model to vector.
-mod_2_vec = function(mod, args) {
+mod_2_vec = function(mod, p.max) {
   
   # Return model as vector.
-  return(unname(c(mod$sigma2, mod$coef, rep(NA, as.numeric(args[4]) - length(mod$coef)))))
+  return(unname(c(mod$sigma2, mod$coef, rep(NA, p.max - length(mod$coef)))))
   
 }
 
@@ -15,6 +15,14 @@ csm_matrix = function(csm) {
   
   # Return cross-spectral mass matrix.
   return(matrix(c(1, Conj(csm), csm, 1), 2, 2))
+  
+}
+
+# Cross-spectral mass matrix.
+csm_matrix3 = function(csms) {
+  
+  # Return cross-spectral mass matrix.
+  return(matrix(c(1, Conj(csms[1]), Conj(csms[2]), csms[1], 1, Conj(csms[3]), csms[2], csms[3], 1), 3, 3))
   
 }
 
@@ -82,6 +90,14 @@ lat_trend_array = function(Phi, X) {
     
 }
 
+# Latitudinal array trending.
+lat_trend_array2 = function(Phi, X) {
+  
+  # Return trended array data.
+  return(apply(abind(Phi, X, along = 2), 1, lat_trend))
+  
+}
+
 # Inverse normalised Fourier transform.
 inverse_nfft = function(spec) {
   
@@ -99,11 +115,11 @@ temp_trend = function(mod, innov) {
 }
 
 # Temporal array trending.
-temp_trend_array = function(X, args) {
+temp_trend_array = function(X, p.max) {
   
   # Matrix commponents.
-  mod = X[1, 1:(as.numeric(args[4]) + 1)]
-  innov = X[, (as.numeric(args[4]) + 2):ncol(X)]
+  mod = X[1, 1:(p.max + 1)]
+  innov = X[, (p.max + 2):ncol(X)]
   
   # Return trended array data.
   return(matrix(temp_trend(mod, c(t(innov))), nrow = nrow(innov), ncol = ncol(innov), byrow = TRUE))

@@ -8,7 +8,6 @@
 # - 2) Ensemble size.
 # - 3) AR order.
 # - 4) MA order.
-# - 5) Stationary.
 args = commandArgs(TRUE)
 
 # Libraries.
@@ -27,7 +26,7 @@ source("scripts/lat/lat_fun.R")
 # Load files.
 # ========================
 load(paste0("data/", args[1], "/smf.r", args[2], ".p", args[3], ".q", args[4], ".R"))
-load(paste0("data/", args[1], "/csmf.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".R"))
+load(paste0("data/", args[1], "/csmf.r", args[2], ".p", args[3], ".q", args[4], ".R"))
 load(paste0("data/", args[1], "/mpgram.r", args[2], ".p", args[3], ".q", args[4], ".R"))
 load(paste0("data/", args[1], "/mcpgram.r", args[2], ".p", args[3], ".q", args[4], ".R"))
 load(paste0("data/", args[1], "/lat.R"))
@@ -56,7 +55,7 @@ g = ggplot(pgram_df, aes(x = Frequency)) +
 
 # Save plot.
 # ========================
-ggsave(paste0("pgram_plots.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".png"), 
+ggsave(paste0("pgram_plots.r", args[2], ".p", args[3], ".q", args[4], ".png"), 
               plot = g, path = paste0("plots/", args[1]),
               width = 15, height = 8, units = "cm")
 

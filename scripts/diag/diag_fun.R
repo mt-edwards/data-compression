@@ -20,6 +20,15 @@ temp_lm = function(y, year) {
   
 }
 
+# Temporal residuals.
+# ========================
+temp_resid = function(y, year) {
+  
+  # Return linear model
+  return(lm(y ~ year)$residuals)
+  
+}
+
 # Temporal auto-covariance.
 # ========================
 temp_acf = function(y) {
@@ -29,7 +38,7 @@ temp_acf = function(y) {
   
 }
 
-# Temporal cross-covariance.
+# Temporal cross-correlation
 # ========================
 temp_ccf = function(y) {
   

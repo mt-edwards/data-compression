@@ -2,5 +2,5 @@
 
 for var in TMQ TREFHT U10; 
 do
-	Rscript lat_data.R $var $1 $2 $3
+	Rscript lat_select.R $var $1 $2 $3 $4
 done

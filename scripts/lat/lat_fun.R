@@ -142,3 +142,42 @@ lat_detrend = function(coh, nsp) {
   return((nsp - coh_pad * nsp_lag) / sqrt(1 - coh_pad ^ 2))
   
 }
+
+# Non-stationary coherence matrix.
+# ========================
+ns_coh_matrix = function(coh) {
+  
+  # Coherence matrix.
+  C = matrix(1, length(coh) + 1, length(coh) + 1)
+  
+  for (i in 1:(length(coh) + 1)) {
+    
+    for (j in 1:(length(coh) + 1)) {
+      
+      # Assign coherence matrix entries.
+      if (i < j) C[i, j] = prod(coh[i:(j - 1)])
+      if (j < i) C[i, j] = prod(coh[j:(i - 2)])
+      
+    }
+    
+  }
+  
+  # Return non-stationary coherence matrix.
+  return(C)
+  
+}
+
+# Calculate AIC.
+# ========================
+cal_AIC = function(Cs, nspecm, p) {
+  
+  # Invesre Cholesky factors.
+  Rinvs  = lapply(Cs, function(C) solve(chol(C)))
+  
+  # Log-determinant.
+  LD = sum(sapply(Rinvs, function(Rinv) log(1 / prod(diag(Rinv)))))
+  
+  # Cluster computation.
+  return(2 * p + 2 * sum(parApply(cl, nspec, 1:2, function(X) lat_neg_log_like(X, Rinvs, LD))))
+  
+}

@@ -4,12 +4,11 @@
 
 # Command line arguments
 # =======================
-# - 1) Variable name 1.
+# - 1) Variable name.
 # - 2) Ensemble size.
 # - 3) AR order.
 # - 4) MA order.
-# - 5) Stationary.
-# - 6) Taper.
+# - 5) Taper.
 args = commandArgs(TRUE)
 
 # Libraries.
@@ -27,11 +26,11 @@ source("scripts/multi/multi_fun.R")
 
 # Load files.
 # ========================
-load(paste0("data/", args[1], "/dnspec.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".R"))
+load(paste0("data/", args[1], "/dnspec.r", args[2], ".p", args[3], ".q", args[4], ".R"))
 
 # Tapered spectra.
 # ========================
-tdnspec = tapered_spec(dnspec, as.numeric(args[6]))
+tdnspec = tapered_spec(dnspec, as.numeric(args[5]))
 
 # Unscaled spectra.
 # ========================
@@ -39,7 +38,7 @@ utdnspec = unscaled_spec(tdnspec)
 
 # Save files.
 # =======================
-save(utdnspec, file = paste0("data/", args[1], "/utdnspec.r", args[2], ".p", args[3], ".q", args[4], ".", args[5], ".t", args[6], ".R"))
+save(utdnspec, file = paste0("data/", args[1], "/utdnspec.r", args[2], ".p", args[3], ".q", args[4], ".t", args[5], ".R"))
 
 # Clear workspace.
 # =======================
