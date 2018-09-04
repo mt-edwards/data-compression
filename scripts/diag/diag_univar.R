@@ -31,11 +31,14 @@ load(file = paste0("data/", args[1], "/lon.R"))
 load(file = paste0("data/", args[1], "/lat.R"))
 load(file = paste0("data/", args[1], "/year.R"))
 Y.sim = get(load(file = paste0("data/", args[1], "/Y.r", args[2], ".p", args[3], ".q", args[4], ".t", args[5], ".s", args[6], ".R")))
-Y = get(load(file = paste0("data/", args[1], "/Y.R")))
+D.sim = get(load(file = paste0("data/", args[1], "/D.r", args[2], ".p", args[3], ".q", args[4], ".t", args[5], ".s", args[6], ".R")))
+Y = get(load(file = paste0("data/", args[1], "/Y.R"))) 
+D = aperm(aaply(Y, 2:4, function(y) y - mean(y), .progress = "text"), c(4, 1, 2, 3))
 
-# Test set.
+# Test sets.
 # ========================
 Y = Y[(as.numeric(args[2]) + 1):dim(Y)[1], , , ]
+D = D[(as.numeric(args[2]) + 1):dim(D)[1], , , ]
 
 # Longitude and latitude indices.
 # ========================
@@ -49,12 +52,10 @@ LM.sim = aaply(Y.sim[, , lon.ind, lat.ind], c(1, 3, 4), temp_lm, year = year, .p
 
 # Annomoly arrays.
 # ========================
-R = aperm(aaply(Y, c(1, 3, 4), temp_resid, year = year, .progress = "text"), c(1, 4, 2, 3))
-R.sim = aperm(aaply(Y.sim, c(1, 3, 4), temp_resid, year = year, .progress = "text"), c(1, 4, 2, 3))
-R = abind(R[, , lon.ind, lat.ind], R[, , lon.ind + 1, lat.ind], 
-          R[, , lon.ind, lat.ind + 1], R[, , lon.ind + 1, lat.ind + 1], rev.along = 0)
-R.sim = abind(R.sim[, , lon.ind, lat.ind], R.sim[, , lon.ind + 1, lat.ind], 
-              R.sim[, , lon.ind, lat.ind + 1], R.sim[, , lon.ind + 1, lat.ind + 1], rev.along = 0)
+D = abind(D[, , lon.ind, lat.ind], D[, , lon.ind + 1, lat.ind], 
+          D[, , lon.ind, lat.ind + 1], D[, , lon.ind + 1, lat.ind + 1], rev.along = 0)
+D.sim = abind(D.sim[, , lon.ind, lat.ind], D.sim[, , lon.ind + 1, lat.ind], 
+              D.sim[, , lon.ind, lat.ind + 1], D.sim[, , lon.ind + 1, lat.ind + 1], rev.along = 0)
 
 # Longitudes and latitudes.
 # ========================
@@ -63,12 +64,12 @@ lat = lat[lat.ind]
 
 # Spatio-temporal covariances.
 # ========================
-TempC = aaply(R[, , , , 1], c(1, 3, 4), temp_acf, .progress = "text")
-TempC.sim = aaply(R.sim[, , , , 1], c(1, 3, 4), temp_acf, .progress = "text")
-LonC = aaply(R[, , , ,c(1, 2)], c(1, 3, 4), temp_ccf, .progress = "text")
-LonC.sim = aaply(R.sim[, , , ,c(1, 2)], c(1, 3, 4), temp_ccf, .progress = "text")
-LatC = aaply(R[, , , ,c(1, 3)], c(1, 3, 4), temp_ccf, .progress = "text")
-LatC.sim = aaply(R.sim[, , , ,c(1, 3)], c(1, 3, 4), temp_ccf, .progress = "text")
+TempC = aaply(D[, , , , 1], c(1, 3, 4), temp_acf, .progress = "text")
+TempC.sim = aaply(D.sim[, , , , 1], c(1, 3, 4), temp_acf, .progress = "text")
+LonC = aaply(D[, , , ,c(1, 2)], c(1, 3, 4), temp_ccf, .progress = "text")
+LonC.sim = aaply(D.sim[, , , ,c(1, 2)], c(1, 3, 4), temp_ccf, .progress = "text")
+LatC = aaply(D[, , , ,c(1, 3)], c(1, 3, 4), temp_ccf, .progress = "text")
+LatC.sim = aaply(D.sim[, , , ,c(1, 3)], c(1, 3, 4), temp_ccf, .progress = "text")
 
 # Mean (2020)
 # ========================
