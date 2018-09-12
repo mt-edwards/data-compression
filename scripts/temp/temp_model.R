@@ -25,13 +25,17 @@ source("scripts/temp/temp_fun.R")
 
 # Load data.
 # =======================
-load(paste0("data/", args[1], "/D.r", args[2], ".R"))
+load(paste0("data/", args[1], "/Y.R"))
+
+# Load data.
+# =======================
+Y = Y[seq_len(args[2]), , , ]
 
 # Temporal Model.
 # =======================
 cl = makeCluster(detectCores() - 1)
-clusterExport(cl, list("D", "temp_fit", "auto.arima", "args"))
-temp_model = parApply(cl, D, 3:4, temp_fit, args = args)
+clusterExport(cl, list("Y", "temp_fit", "auto.arima", "args"))
+temp_model = parApply(cl, Y, 3:4, temp_fit, args = args)
 stopCluster(cl)
 
 # Save files.

@@ -4,26 +4,28 @@
 
 # Temporal selection function.
 # =======================
-temp_fit = function(d, args) {
+temp_fit = function(y, args) {
   
   # Return temporal model.
-  return(auto.arima(c(t(d)), stationary = TRUE, allowmean = FALSE, ic = "aic", 
+  return(auto.arima(c(t(y)),
                     max.p = as.numeric(args[3]), 
                     max.q = as.numeric(args[4]),
-                    start.q = as.numeric(args[4])))
+                    xreg = rep(seq_len(ncol(y)), nrow(y))))
   
 }
-
+                      
 # Temporal parameters.
 # ========================
-temp_pars = function(mod) {
+temp_pars = function(mod, args) {
 
-    # AR coeficient.
-    ar1 = unname(mod[[1]]$coef["ar1"])
+    # Temporal parameters.
+    pars = c(ifelse(is.na(mod[[1]]$coef["ar1"]), 0, mod[[1]]$coef["ar1"]),
+             ifelse(is.na(mod[[1]]$coef["intercept"]), 0, mod[[1]]$coef["intercept"]),
+             ifelse(is.na(mod[[1]]$coef["xreg"]), 0, mod[[1]]$coef["xreg"]),
+             sqrt(mod[[1]]$sigma2))
   
     # Return parameters.
-    return(c(ar1 = ifelse(is.na(ar1), 0, ar1), 
-             std = sqrt(mod[[1]]$sigma2)))
+    return(unname(pars))
   
 }
 
@@ -31,11 +33,8 @@ temp_pars = function(mod) {
 # =======================
 temp_resid = function(mod, args) {
   
-  # Residuals.
-  resid = mod$residuals
-  
   # Return residuals.
-  return(matrix(scale(resid), ncol =  as.numeric(args[2])) * sqrt(length(resid) / (length(resid) - 1)))
+  return(matrix(scale(mod$residuals), ncol =  as.numeric(args[2])))
   
 } 
 

@@ -36,7 +36,7 @@ pars = apply(temp_model, 1:2, temp_pars)
 
 # Save NetCDF files.
 # =======================
-map2(alply(pars, 1), first(dimnames(pars)), save_ncdf, lon = lon, lat = lat, args = args)
+map2(alply(pars, 1), c("ar1", "intercept", "slope", "sd"), save_ncdf, lon = lon, lat = lat, args = args)
 
 # Residuals.
 # =======================
