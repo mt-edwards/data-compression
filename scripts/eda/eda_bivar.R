@@ -50,7 +50,7 @@ R = aperm(aaply(Y, c(1, 3, 4, 5), lm_res, .progress = "text"), c(1, 5, 2, 3, 4))
 
 # Unscaled residuals.
 # ========================
-U = apern(aaply(Y, c(1, 3, 4, 5), lm_unscaled_res, .progress = "text"), c(1, 5, 2, 3, 4))
+U = aperm(aaply(Y, c(1, 3, 4, 5), lm_unscaled_res, .progress = "text"), c(1, 5, 2, 3, 4))
 
 # Cross-covariances.
 # ========================
@@ -60,8 +60,8 @@ U.cov = aaply(U, c(1, 3, 4), cross_cov, .progress = "text")
 
 # Cross-covariance plots.
 # ========================
-png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".png"), width = 900, height = 900)
-cross_cov_plot_grid(Y.cov, R.cov, U.cov, lat, lon, "Cross-covariance", paste(args, collapse = " - "))
+png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".png"), width = 800, height = 800)
+cross_cov_plot_grid(Y.cov, R.cov, U.cov, lat, lon, "Cross-covariance", paste(args, collapse = " vs. "))
 dev.off()
 
 # Clear workspace.
