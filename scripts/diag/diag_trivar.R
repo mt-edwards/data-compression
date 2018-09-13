@@ -13,7 +13,7 @@
 # - 7) Taper.
 # - 8) Simulated ensemble size.
 args = commandArgs(TRUE)
-args = c("TMQ", "TREFHT", "U10", 5, 3, 0, 10, 5)
+args = c("TMQ", "TS", "U10", 5, 3, 0, 10, 5)
 
 # Libraries.
 # ========================
@@ -70,13 +70,13 @@ VarC23 = aaply(Y[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
 
 # Multivariate cross-covariance.
 # ========================
-png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"))
+png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
 diag_plot_grid(VarC12, VarC12.indep, VarC12.joint, lat, lon, "Cross-covariance", paste(args[c(1, 2)], collapse = " vs. "))
 dev.off()
-png(paste0("plots/ALL/multi_cov.", args[1], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"))
+png(paste0("plots/ALL/multi_cov.", args[1], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
 diag_plot_grid(VarC13, VarC13.indep, VarC13.joint, lat, lon, "Cross-covariance", paste(args[c(1, 3)], collapse = " vs. "))
 dev.off()
-png(paste0("plots/ALL/multi_cov.", args[2], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"))
+png(paste0("plots/ALL/multi_cov.", args[2], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
 diag_plot_grid(VarC23, VarC23.indep, VarC23.joint, lat, lon, "Cross-covariance", paste(args[c(2, 3)], collapse = " vs. "))
 dev.off()
 

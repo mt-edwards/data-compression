@@ -13,7 +13,7 @@
 # - 7) Taper.
 # - 8) Simulated ensemble size.
 args = commandArgs(TRUE)
-args = c("TMQ", "TREFHT", "U10", 5, 3, 0, 10, 5)
+args = c("TMQ", "TS", "U10", 5, 3, 0, 10, 5)
 
 # Libraries.
 # ========================
