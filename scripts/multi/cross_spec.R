@@ -33,6 +33,7 @@ utdnspec2 = get(load(paste0("data/", args[2], "/utdnspec.r", args[3], ".p", args
 # Mean multivariate cross-periodogram.
 # ========================
 mcpgram = multi_pgram(utdnspec1, utdnspec2)
+mcpgram$argument = shift_arguments(mcpgram$argument, -1)
 
 # Mean multivariate cross-periodogram data frame.
 # ========================

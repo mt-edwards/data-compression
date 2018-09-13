@@ -6,7 +6,12 @@
 mod_2_vec = function(mod, p.max) {
   
   # Return model as vector.
-  return(unname(c(mod$sigma2, mod$coef, rep(NA, p.max - length(mod$coef)))))
+  return(c(int = unname(mod$coef["intercept"]), 
+           xrg = unname(mod$coef["xreg"]), 
+           var = unname(mod$sigma2), 
+           ar1 = unname(mod$coef["ar1"]), 
+           ar2 = unname(mod$coef["ar2"]), 
+           ar3 = unname(mod$coef["ar3"])))
   
 }
 
@@ -110,7 +115,7 @@ inverse_nfft = function(spec) {
 temp_trend = function(mod, innov) {
   
   # Return trended data.
-  return(arima.sim(list(ar = na.omit(mod[-1])), n = length(innov), innov = innov * sqrt(mod[1])))
+  return(arima.sim(list(ar = na.omit(mod[c("ar1", "ar2", "ar3")])), n = length(innov), innov = innov * sqrt(mod["var"])) + mod["int"] + seq_along(innov) * mod["xrg"])
   
 }
 
@@ -118,10 +123,10 @@ temp_trend = function(mod, innov) {
 temp_trend_array = function(X, p.max) {
   
   # Matrix commponents.
-  mod = X[1, 1:(p.max + 1)]
-  innov = X[, (p.max + 2):ncol(X)]
+  mod = X[1, 1:(p.max + 3)]
+  innov = X[, (p.max + 4):ncol(X)]
   
   # Return trended array data.
-  return(matrix(temp_trend(mod, c(t(innov))), nrow = nrow(innov), ncol = ncol(innov), byrow = TRUE))
+  return(apply(innov, 1, function(innov_vec) temp_trend(mod, innov_vec)))
   
 }

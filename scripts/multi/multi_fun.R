@@ -2,6 +2,15 @@
 # Multivariate functions.#
 ##########################
 
+# Shift arguments.
+# ========================
+shift_arguments = function(arguments, min_arg) {
+  
+  # Return shifted arguments.
+  return(ifelse(arguments > min_arg, arguments, arguments + 2 * pi))
+  
+}
+
 # Mean multivariate cross-preriodogram.
 # ========================
 multi_pgram = function(dnspec1, dnspec2) {

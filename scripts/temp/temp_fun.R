@@ -7,7 +7,7 @@
 temp_fit = function(y, args) {
   
   # Return temporal model.
-  return(auto.arima(c(t(y)),
+  return(auto.arima(c(t(y)), stationary = TRUE,
                     max.p = as.numeric(args[3]), 
                     max.q = as.numeric(args[4]),
                     xreg = rep(seq_len(ncol(y)), nrow(y))))
@@ -37,35 +37,6 @@ temp_resid = function(mod, args) {
   return(matrix(scale(mod$residuals), ncol =  as.numeric(args[2])))
   
 } 
-
-# Save NetCDF file.
-# =======================
-save_ncdf = function(var, lon, lat, name, args) {
-  
-  # Create NetCDF file.
-  nc = create.nc(paste0("data_ncdf/", args[1], "/", name, ".nc"))
-  
-  # Define dimensions.
-  dim.def.nc(nc, "lon", length(lon))
-  dim.def.nc(nc, "lat", length(lat))
-  
-  # Define variables.
-  var.def.nc(nc, "lon", "NC_DOUBLE", 0)
-  var.def.nc(nc, "lat", "NC_DOUBLE", 1)
-  var.def.nc(nc, "var", "NC_FLOAT", c(0, 1))
-  
-  # Put attributes.
-  att.put.nc(nc, "var", "coordinates", "NC_CHAR", "long lat")
-  
-  # Put variables.
-  var.put.nc(nc, "lon", lon)
-  var.put.nc(nc, "lat", lat)
-  var.put.nc(nc, "var", var)
-  
-  # Close NetCDF file.
-  close.nc(nc)
-  
-}
 
 # Fourier transform function.
 # ========================

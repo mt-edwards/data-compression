@@ -43,10 +43,13 @@ utdnspec2 = get(load(paste0("data/", args[2], "/utdnspec.r", args[3], ".p", args
 # Mean multivariate cross-periodogram.
 # ========================
 mcpgram = multi_pgram(utdnspec1, utdnspec2)
+mcpgram$argument = shift_arguments(mcpgram$argument, -1)
+mod = smooth.spline(mcpgram$modulus, df = 20)$y
+arg = smooth.spline(mcpgram$argument, df = 20)$y[1:(length(mod) / 2)]
 
 # Multivariate cross-spectral mass function.
 # ========================
-mcsmf = smooth.spline(mcpgram$modulus, df = 20)$y
+mcsmf = complex(length(mod), modulus  = mod, argument = c(arg, 2 * pi - rev(arg)))
 
 # Save files.
 # ========================

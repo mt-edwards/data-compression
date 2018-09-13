@@ -34,10 +34,6 @@ load(paste0("models/", args[1], "/temp_model.r", args[2], ".p", args[3], ".q", a
 # ========================
 pars = apply(temp_model, 1:2, temp_pars)
 
-# Save NetCDF files.
-# =======================
-map2(alply(pars, 1), c("ar1", "intercept", "slope", "sd"), save_ncdf, lon = lon, lat = lat, args = args)
-
 # Residuals.
 # =======================
 resid = aperm(aaply(temp_model, 1:2, temp_resid, args = args), c(4:3, 1:2))
