@@ -110,7 +110,7 @@ cal_SMF = function(pars) {
 # ========================
 best_AIC = function(aics) {
   
-  return(ifelse(aics[1] + 2 <= aics[2], 1, 2))
+  return(ifelse(aics[1] + 2 < aics[2], 1, 2))
   
 }
 
