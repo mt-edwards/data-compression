@@ -6,11 +6,22 @@
 # =======================
 temp_fit = function(y, args) {
   
-  # Return temporal model.
-  return(auto.arima(c(t(y)), stationary = TRUE,
+  # Extrenal regressor matrix.
+  Xreg = do.call(rbind, replicate(nrow(y), poly(seq_len(ncol(y)), 2), simplify = FALSE))
+  colnames(Xreg) = c("xreg", "xreg2")
+  
+  # Temporal models.
+  mod1 = auto.arima(c(t(y)), stationary = TRUE,
                     max.p = as.numeric(args[3]), 
                     max.q = as.numeric(args[4]),
-                    xreg = rep(seq_len(ncol(y)), nrow(y))))
+                    xreg  = Xreg[, 1])
+  mod2 = auto.arima(c(t(y)), stationary = TRUE,
+                    max.p = as.numeric(args[3]), 
+                    max.q = as.numeric(args[4]),
+                    xreg  = Xreg)
+
+  # Return temporal model.
+  return(ifelse(mod2$aic + 2 < mod1$aic, mod2, mod1))
   
 }
                       
