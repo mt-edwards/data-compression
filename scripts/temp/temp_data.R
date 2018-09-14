@@ -30,10 +30,6 @@ load(paste0("data/", args[1], "/lon.R"))
 load(paste0("data/", args[1], "/lat.R"))
 load(paste0("models/", args[1], "/temp_model.r", args[2], ".p", args[3], ".q", args[4], ".R"))
 
-# Temporal parameters.
-# ========================
-pars = apply(temp_model, 1:2, temp_pars)
-
 # Residuals.
 # =======================
 resid = aperm(aaply(temp_model, 1:2, temp_resid, args = args), c(4:3, 1:2))
@@ -52,7 +48,6 @@ mpgram = apply(pgram, 3:4, mean)
 
 # Save files.
 # =======================
-save(pars, file = paste0("models/", args[1], "/temp_pars.r", args[2], ".p", args[3], ".q", args[4], ".R"))
 save(resid, file = paste0("data/", args[1], "/resid.r", args[2], ".p", args[3], ".q", args[4], ".R"))
 save(spec, file = paste0("data/", args[1], "/spec.r", args[2], ".p", args[3], ".q", args[4], ".R"))
 save(pgram, file = paste0("data/", args[1], "/pgram.r", args[2], ".p", args[3], ".q", args[4], ".R"))

@@ -9,7 +9,7 @@ args = commandArgs(TRUE)
 
 # Load libraries.
 # =======================
-package_names = c("tidyverse", "parallel", "Hmisc", "RNetCDF", "plyr", "gridExtra")
+package_names = c("tidyverse", "parallel", "Hmisc", "plyr", "gridExtra")
 lapply(package_names, library, character.only = TRUE)
 
 # Set Working Directory (bash scripts).
@@ -18,7 +18,6 @@ setwd("/Users/matthewedwards/Sync/Projects/data-compression")
 
 # Source functions.
 # =======================
-source("scripts/temp/temp_fun.R")
 source("scripts/eda/eda_fun.R")
 
 # Load data.

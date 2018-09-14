@@ -21,22 +21,7 @@ temp_fit = function(y, args) {
                     xreg  = Xreg)
 
   # Return temporal model.
-  return(ifelse(mod2$aic + 2 < mod1$aic, mod2, mod1))
-  
-}
-                      
-# Temporal parameters.
-# ========================
-temp_pars = function(mod, args) {
-
-    # Temporal parameters.
-    pars = c(ifelse(is.na(mod[[1]]$coef["ar1"]), 0, mod[[1]]$coef["ar1"]),
-             ifelse(is.na(mod[[1]]$coef["intercept"]), 0, mod[[1]]$coef["intercept"]),
-             ifelse(is.na(mod[[1]]$coef["xreg"]), 0, mod[[1]]$coef["xreg"]),
-             sqrt(mod[[1]]$sigma2))
-  
-    # Return parameters.
-    return(unname(pars))
+  if (mod2$aic + 2 < mod1$aic) return(mod2) else return(mod1)
   
 }
 
