@@ -3,15 +3,16 @@
 ##########################
 
 # Convert model to vector.
-mod_2_vec = function(mod, p.max) {
+mod_2_vec = function(mod) {
   
   # Return model as vector.
-  return(c(int = unname(mod$coef["intercept"]), 
-           xrg = unname(mod$coef["xreg"]), 
-           var = unname(mod$sigma2), 
-           ar1 = unname(mod$coef["ar1"]), 
-           ar2 = unname(mod$coef["ar2"]), 
-           ar3 = unname(mod$coef["ar3"])))
+  return(c(int  = unname(mod$coef["intercept"]), 
+           xrg  = unname(mod$coef["xreg"]),
+           xrg2 = unname(mod$coef["xreg2"]),
+           var  = unname(mod$sigma2), 
+           ar1  = unname(mod$coef["ar1"]), 
+           ar2  = unname(mod$coef["ar2"]), 
+           ar3  = unname(mod$coef["ar3"])))
   
 }
 
@@ -114,8 +115,14 @@ inverse_nfft = function(spec) {
 # Temporal trending.
 temp_trend = function(mod, innov) {
   
+  # Extrenal regressor coefficients.
+  coefs = na.omit(mod[c("xrg", "xrg2")])
+  
+  # Extrenal regressor matrix.
+  Xreg = poly(seq(innov), length(coefs))
+  
   # Return trended data.
-  return(arima.sim(list(ar = na.omit(mod[c("ar1", "ar2", "ar3")])), n = length(innov), innov = innov * sqrt(mod["var"])) + mod["int"] + seq_along(innov) * mod["xrg"])
+  return(arima.sim(list(ar = na.omit(mod[c("ar1", "ar2", "ar3")])), n = length(innov), innov = innov * sqrt(mod["var"])) + mod["int"] + Xreg %*% coefs)
   
 }
 
@@ -123,8 +130,8 @@ temp_trend = function(mod, innov) {
 temp_trend_array = function(X, p.max) {
   
   # Matrix commponents.
-  mod = X[1, 1:(p.max + 3)]
-  innov = X[, (p.max + 4):ncol(X)]
+  mod = X[1, 1:(p.max + 4)]
+  innov = X[, (p.max + 5):ncol(X)]
   
   # Return trended array data.
   return(apply(innov, 1, function(innov_vec) temp_trend(mod, innov_vec)))

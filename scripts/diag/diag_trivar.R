@@ -56,28 +56,34 @@ Y.joint = Y.joint[, , lon.ind, lat.ind, ]
 Y.indep = Y.indep[, , lon.ind, lat.ind, ]
 Y = Y[(as.numeric(args[4]) + 1):dim(Y)[1], , lon.ind, lat.ind, ]
 
+# Detrended.
+# ========================
+D.joint = aperm(aaply(Y.joint, 3:5, quad_detrend, .progress = "text"), c(4, 5, 1, 2, 3))
+D.indep = aperm(aaply(Y.indep, 3:5, quad_detrend, .progress = "text"), c(4, 5, 1, 2, 3))
+D       = aperm(aaply(Y, 3:5, quad_detrend, .progress = "text"), c(4, 5, 1, 2, 3))
+
 # Data arrays.
 # ========================
-VarC12.joint = aaply(Y.joint[, , , , c(1, 2)], c(1, 3, 4), cross_cov, .progress = "text")
-VarC12.indep = aaply(Y.indep[, , , , c(1, 2)], c(1, 3, 4), cross_cov, .progress = "text")
-VarC12 = aaply(Y[, , , , c(1, 2)], c(1, 3, 4), cross_cov, .progress = "text")
-VarC13.joint = aaply(Y.joint[, , , , c(1, 3)], c(1, 3, 4), cross_cov, .progress = "text")
-VarC13.indep = aaply(Y.indep[, , , , c(1, 3)], c(1, 3, 4), cross_cov, .progress = "text")
-VarC13 = aaply(Y[, , , , c(1, 3)], c(1, 3, 4), cross_cov, .progress = "text")
-VarC23.joint = aaply(Y.joint[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
-VarC23.indep = aaply(Y.indep[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
-VarC23 = aaply(Y[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC12.joint = aaply(D.joint[, , , , c(1, 2)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC12.indep = aaply(D.indep[, , , , c(1, 2)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC12 = aaply(D[, , , , c(1, 2)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC13.joint = aaply(D.joint[, , , , c(1, 3)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC13.indep = aaply(D.indep[, , , , c(1, 3)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC13 = aaply(D[, , , , c(1, 3)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC23.joint = aaply(D.joint[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC23.indep = aaply(D.indep[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
+VarC23 = aaply(D[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
 
-# Multivariate cross-covariance.
+# Cross-covariance plots.
 # ========================
 png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-diag_plot_grid(VarC12, VarC12.indep, VarC12.joint, lat, lon, "Cross-covariance", paste(args[c(1, 2)], collapse = " vs. "))
+cross_cov_plot_grid(VarC12, VarC12.indep, VarC12.joint, lat, lon, "Cross-covariance", paste(args[c(1, 2)], collapse = " vs. "))
 dev.off()
 png(paste0("plots/ALL/multi_cov.", args[1], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-diag_plot_grid(VarC13, VarC13.indep, VarC13.joint, lat, lon, "Cross-covariance", paste(args[c(1, 3)], collapse = " vs. "))
+cross_cov_plot_grid(VarC13, VarC13.indep, VarC13.joint, lat, lon, "Cross-covariance", paste(args[c(1, 3)], collapse = " vs. "))
 dev.off()
 png(paste0("plots/ALL/multi_cov.", args[2], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-diag_plot_grid(VarC23, VarC23.indep, VarC23.joint, lat, lon, "Cross-covariance", paste(args[c(2, 3)], collapse = " vs. "))
+cross_cov_plot_grid(VarC23, VarC23.indep, VarC23.joint, lat, lon, "Cross-covariance", paste(args[c(2, 3)], collapse = " vs. "))
 dev.off()
 
 # Clear workspace.

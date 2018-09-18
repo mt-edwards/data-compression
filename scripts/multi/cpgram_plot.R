@@ -29,24 +29,26 @@ source("scripts/multi/multi_fun.R")
 # ========================
 utdnspec1 = get(load(paste0("data/", args[1], "/utdnspec.r", args[3], ".p", args[4], ".q", args[5], ".t", args[6], ".R")))
 utdnspec2 = get(load(paste0("data/", args[2], "/utdnspec.r", args[3], ".p", args[4], ".q", args[5], ".t", args[6], ".R")))
+load(paste0("data/ALL/mcsmf.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".t", args[6], ".R"))
 
 # Mean multivariate cross-periodogram.
 # ========================
 mcpgram = multi_pgram(utdnspec1, utdnspec2)
-mcpgram$argument = shift_arguments(mcpgram$argument, -1)
 
 # Mean multivariate cross-periodogram data frame.
 # ========================
-mcpgram_df = tibble(Frequency = rep(0:(dim(utdnspec1)[3] - 1) / dim(utdnspec1)[3], 2),
-                    Value     = unlist(mcpgram),
-                    Type      = rep(c("Modulus Squared", "Argument"), each = dim(utdnspec1)[3]))
+mcpgram_df = tibble(Frequency        = rep(0:(dim(utdnspec1)[3] - 1) / dim(utdnspec1)[3], 2),
+                    `Cross-spectrum` = unlist(mcpgram),
+                    CSMF             = c(Mod(mcsmf), Arg(mcsmf)),
+                    Type             = rep(c("Modulus", "Argument"), each = dim(utdnspec1)[3]))
 
 # Mean multivariate cross-periodogram plot.
 # ========================
-g = ggplot(mcpgram_df, aes(x = Frequency, y = Value)) +
-  geom_point(col = "blue", shape = 1) +
+g = ggplot(mcpgram_df) +
+  geom_point(aes(x = Frequency, y = `Cross-spectrum`), col = "blue", shape = 1) +
+  geom_line(aes(x = Frequency, y = CSMF), col = "red", lwd = 1.1) +
   facet_grid(Type ~ ., scales = "free") +
-  scale_x_continuous(limits = c(0, 0.5)) +
+  scale_x_continuous(limits = c(0, 0.49)) +
   labs(main = "Test") +
   ggtitle(paste(args[1], args[2], sep = " - ")) +
   theme_bw()

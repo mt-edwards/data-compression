@@ -41,23 +41,23 @@ dnspec = array(rnorm(as.numeric(args[6]) * 95 * 288 * 192), dim = c(as.numeric(a
 
 # Trended cross-spectral innnovations.
 # ========================
-nspec = aperm(aaply(dnspec, 1:2, lat_trend_array2, Phi = coh, .progress = "text"), c(1, 2, 4, 3))
+nspec = aperm(aaply(dnspec, 1:2, lat_trend_array2, Phi = coh, .progress = "text"), c(1, 2, 4, 3)); rm(dnspec, coh)
 
 # Unnormalised cross-spectral innovations.
 # ========================
-spec = aaply(nspec, 1:2, function(X) X * sqrt(smf))
+spec = aaply(nspec, 1:2, function(X) X * sqrt(smf), .progress = "text"); rm(nspec, smf)
 
 # Inverse Fourier transform innoations.
 # ========================
-resid = Re(aperm(aaply(spec, c(1, 2, 4), inverse_nfft, .progress = "text"), c(1, 2, 4, 3)))
+resid = Re(aperm(aaply(spec, c(1, 2, 4), inverse_nfft, .progress = "text"), c(1, 2, 4, 3))); rm(spec)
 
 # Model and residual array.
 # ========================
-temp_model_resid = abind(aperm(replicate(as.numeric(args[6]), temp_model), c(4, 3, 1, 2)), resid, along = 2)
+temp_model_resid = abind(aperm(replicate(as.numeric(args[6]), temp_model), c(4, 3, 1, 2)), resid, along = 2); rm(resid, temp_model)
 
-# Complete data.
+ # Complete data.
 # ========================
-Y = aperm(aaply(temp_model_resid, 3:4, temp_trend_array, p.max = as.numeric(args[3]), .progress = "text"), c(4, 3, 1, 2))
+Y = aperm(aaply(temp_model_resid, 3:4, temp_trend_array, p.max = as.numeric(args[3]), .progress = "text"), c(4, 3, 1, 2)); rm(temp_model_resid)
 
 # Save simulated ensemble.
 # ========================
