@@ -13,7 +13,7 @@
 # - 7) Taper.
 # - 8) Simulated ensemble size.
 args = commandArgs(TRUE)
-args = c("TMQ", "TS", "U10", 5, 3, 0, 10, 5)
+args = c("TMQ", "TS", "U10", 5, 3, 0, 10, 28)
 
 # Load libraries.
 # =======================
@@ -66,7 +66,7 @@ print(args[3])
 print(round(data.frame(Means = c(mean(var_m3), rowMeans(var_q3)),
                        SDs   = c(sd(var_m3), apply(var_q3, 1, sd))), 2))
 
-# Temporal and latitudinal statistics.
+ # Temporal and latitudinal statistics.
 # =======================
 temp_w = weight_array(Y1[1, 1, , ], lat)
 cl = makeCluster(detectCores() - 1)
@@ -104,19 +104,19 @@ stopCluster(cl)
 # Spatial NetCDF File.
 # ========================
 map2(alply(spat_p1, 1), c(paste0("intercept.", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                         paste0("trend", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                         paste0("std", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                         paste0("auto-cov", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png")), 
+                         paste0("trend.", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
+                         paste0("std.", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
+                         paste0("auto-cov.", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png")), 
      save_ncdf, lon = lon, lat = lat, args = args)
 map2(alply(spat_p2, 1), c(paste0("intercept.", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                          paste0("trend", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                          paste0("std", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                          paste0("auto-cov", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png")), 
+                          paste0("trend.", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
+                          paste0("std.", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
+                          paste0("auto-cov.", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png")), 
      save_ncdf, lon = lon, lat = lat, args = args)
 map2(alply(spat_p3, 1), c(paste0("intercept.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                          paste0("trend", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                          paste0("std", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
-                          paste0("auto-cov", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png")), 
+                          paste0("trend.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
+                          paste0("std.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
+                          paste0("auto-cov.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png")), 
      save_ncdf, lon = lon, lat = lat, args = args)
 
 # Clear workspace.
