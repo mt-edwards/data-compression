@@ -33,28 +33,29 @@ source("scripts/diag/diag_fun.R")
 load(file = paste0("data/", args[1], "/lon.R"))
 load(file = paste0("data/", args[1], "/lat.R"))
 load(file = paste0("data/", args[1], "/year.R"))
-Y.joint = get(load(paste0("data/ALL/Y.", args[1], ".", args[2], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R")))
-Y.indep1 = get(load(paste0("data/", args[1], "/Y.r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R")))
-Y.indep2 = get(load(paste0("data/", args[2], "/Y.r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R")))
-Y.indep3 = get(load(paste0("data/", args[3], "/Y.r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R")))
-Y.indep  = abind(Y.indep1, Y.indep2, Y.indep3, rev.along = 0); rm(Y.indep1, Y.indep2, Y.indep3)
-Y1 = get(load(paste0("data/", args[1], "/Y.R")))
-Y2 = get(load(paste0("data/", args[2], "/Y.R")))
-Y3 = get(load(paste0("data/", args[3], "/Y.R")))
-Y  = abind(Y1, Y2, Y3, rev.along = 0); rm(Y1, Y2, Y3)
 
 # Longitude and latitude indices.
 # ========================
 lon.ind = c(1, 33, 65, 97, 129, 161, 193, 225, 257)
-lat.ind = 1:(dim(Y)[4] - 1)
+lat.ind = 1:(length(lat) - 1)
+lon = lon[lon.ind]
+lat = lat[lat.ind]
+
+# Load more files.
+# ========================
+Y.joint = get(load(paste0("data/ALL/Y.", args[1], ".", args[2], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R")))[, , lon.ind, lat.ind, ]
+Y.indep1 = get(load(paste0("data/", args[1], "/Y.r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R")))[, , lon.ind, lat.ind]
+Y.indep2 = get(load(paste0("data/", args[2], "/Y.r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R")))[, , lon.ind, lat.ind]
+Y.indep3 = get(load(paste0("data/", args[3], "/Y.r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R")))[, , lon.ind, lat.ind]
+Y.indep  = abind(Y.indep1, Y.indep2, Y.indep3, rev.along = 0); rm(Y.indep1, Y.indep2, Y.indep3)
+Y1 = get(load(paste0("data/", args[1], "/Y.R")))[, , lon.ind, lat.ind]
+Y2 = get(load(paste0("data/", args[2], "/Y.R")))[, , lon.ind, lat.ind]
+Y3 = get(load(paste0("data/", args[3], "/Y.R")))[, , lon.ind, lat.ind]
+Y  = abind(Y1, Y2, Y3, rev.along = 0); rm(Y1, Y2, Y3)
 
 # Test sets.
 # ========================
-lon = lon[lon.ind]
-lat = lat[lat.ind]
-Y.joint = Y.joint[, , lon.ind, lat.ind, ]
-Y.indep = Y.indep[, , lon.ind, lat.ind, ]
-Y = Y[(as.numeric(args[4]) + 1):dim(Y)[1], , lon.ind, lat.ind, ]
+Y = Y[(as.numeric(args[4]) + 1):dim(Y)[1], , , , ]
 
 # Detrended.
 # ========================
@@ -77,13 +78,13 @@ VarC23 = aaply(D[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
 # Cross-covariance plots.
 # ========================
 png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-cross_cov_plot_grid(VarC12, VarC12.indep, VarC12.joint, lat, lon, "Cross-covariance", paste(args[c(1, 2)], collapse = " vs. "))
+cross_cov_plot_grid(VarC12, VarC12.indep, VarC12.joint, lat, lon, "Cross-covariance")
 dev.off()
 png(paste0("plots/ALL/multi_cov.", args[1], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-cross_cov_plot_grid(VarC13, VarC13.indep, VarC13.joint, lat, lon, "Cross-covariance", paste(args[c(1, 3)], collapse = " vs. "))
+cross_cov_plot_grid(VarC13, VarC13.indep, VarC13.joint, lat, lon, "Cross-covariance")
 dev.off()
 png(paste0("plots/ALL/multi_cov.", args[2], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-cross_cov_plot_grid(VarC23, VarC23.indep, VarC23.joint, lat, lon, "Cross-covariance", paste(args[c(2, 3)], collapse = " vs. "))
+cross_cov_plot_grid(VarC23, VarC23.indep, VarC23.joint, lat, lon, "Cross-covariance")
 dev.off()
 
 # Clear workspace.

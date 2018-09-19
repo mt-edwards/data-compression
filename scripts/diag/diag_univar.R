@@ -81,16 +81,16 @@ stopCluster(cl)
 # Temporal and latitudinal statistics plot.
 # =======================
 png(paste0("plots/", args[1], "/temp_lat.", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
-grid.arrange(ensemble_plot(year, temp_m1, "Year", paste("Global Mean", args), seq(2010, 2100, 10)), 
-             ensemble_plot(lat, lat_m1, "Latitude", paste("Latitudinal Mean", args), seq(-90, 90, 30)))
+grid.arrange(ensemble_plot(year, temp_m1, "Year", paste("Global Mean", args[1]), seq(2010, 2100, 10)), 
+             ensemble_plot(lat, lat_m1, "Latitude", paste("Longitudinal Mean", args[1]), seq(-90, 90, 30)))
 dev.off()
 png(paste0("plots/", args[2], "/temp_lat.", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
-grid.arrange(ensemble_plot(year, temp_m2, "Year", paste("Global Mean", args), seq(2010, 2100, 10)), 
-             ensemble_plot(lat, lat_m2, "Latitude", paste("Latitudinal Mean", args), seq(-90, 90, 30)))
+grid.arrange(ensemble_plot(year, temp_m2, "Year", paste("Global Mean", args[2]), seq(2010, 2100, 10)), 
+             ensemble_plot(lat, lat_m2, "Latitude", paste("Longitudinal Mean", args[2]), seq(-90, 90, 30)))
 dev.off()
 png(paste0("plots/", args[3], "/temp_lat.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
-grid.arrange(ensemble_plot(year, temp_m3, "Year", paste("Global Mean", args), seq(2010, 2100, 10)), 
-             ensemble_plot(lat, lat_m3, "Latitude", paste("Latitudinal Mean", args), seq(-90, 90, 30)))
+grid.arrange(ensemble_plot(year, temp_m3, "Year", paste("Global Mean", args[3]), seq(2010, 2100, 10)), 
+             ensemble_plot(lat, lat_m3, "Latitude", paste("Longitudinal Mean", args[3]), seq(-90, 90, 30)))
 dev.off()
 
 # Spatial Statistics.

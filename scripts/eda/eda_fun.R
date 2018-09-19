@@ -101,23 +101,13 @@ save_ncdf = function(var, lon, lat, name, args) {
 # ========================
 lm_res = function(y) {
   
-  # Return residuals.
-  return(lm(y ~ seq_along(y))$residuals)
-  
-} 
-
-# Linear model unscaled residuals.
-# ========================
-lm_unscaled_res = function(y) {
-  
   # Linear model.
-  mod = lm(y ~ seq_along(y))
-  
-  # Return unscaled residuals.
-  return(mod$residuals / sd(mod$residuals))
+  mod = lm(c(t(y)) ~ rep(seq(ncol(y)), nrow(y)))
+
+  # Return scaled residuals.
+  return(matrix(scale(mod$residuals), nrow(y), ncol(y), byrow = TRUE))
   
 } 
-
 
 # Cross-covariance plot.
 # ========================

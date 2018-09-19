@@ -10,7 +10,7 @@ args = commandArgs(TRUE)
 
 # Load libraries.
 # =======================
-package_names = c("tidyverse")
+package_names = c("tidyverse", "plyr", "abind", "RNetCDF")
 lapply(package_names, library, character.only = TRUE)
 
 # Set Working Directory (bash scripts).
@@ -29,40 +29,26 @@ load(file = paste0("data/", args[1], "/year.R"))
 load(file = paste0("data/", args[1], "/lon.R"))
 load(file = paste0("data/", args[1], "/lat.R"))
 
+# Temporary subsetting.
+# =======================
+Y1 = Y1[1:5, , , ]
+Y2 = Y2[1:5, , , ]
+
 # Concatinated arrays.
 # ========================
 Y = abind(Y1, Y2, rev.along = 0); rm(Y1, Y2)
 
-# Longitude and latitude indices.
-# ========================
-lon.ind = c(1, 33, 65, 97, 129, 161, 193, 225, 257)
-lat.ind = 1:(dim(Y)[4] - 1)
-
-# Variable subarray.
-# ========================
-Y = Y[, , lon.ind, lat.ind, ]
-lon = lon[lon.ind]
-lat = lat[lat.ind]
-
 # Residuals.
 # ========================
-R = aperm(aaply(Y, c(1, 3, 4, 5), lm_res, .progress = "text"), c(1, 5, 2, 3, 4))
+R = aperm(aaply(Y, 3:5, lm_res, .progress = "text"), c(4, 5, 1, 2, 3)); rm(Y)
 
-# Unscaled residuals.
+# Correlation.
 # ========================
-U = aperm(aaply(Y, c(1, 3, 4, 5), lm_unscaled_res, .progress = "text"), c(1, 5, 2, 3, 4))
+C = apply(aaply(R, c(1, 3, 4), cross_cov), 2:3, mean); rm(R)
 
-# Cross-covariances.
+# Save NetCDF file.
 # ========================
-Y.cov = aaply(Y, c(1, 3, 4), cross_cov, .progress = "text")
-R.cov = aaply(R, c(1, 3, 4), cross_cov, .progress = "text")
-U.cov = aaply(U, c(1, 3, 4), cross_cov, .progress = "text")
-
-# Cross-covariance plots.
-# ========================
-png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".png"), width = 800, height = 800)
-cross_cov_plot_grid(Y.cov, R.cov, U.cov, lat, lon, "Cross-covariance", paste(args, collapse = " vs. "))
-dev.off()
+save_ncdf(C, lon, lat, paste0(args[1], ".", args[2], ".cross_cor"), "ALL")
 
 # Clear workspace.
 # =======================

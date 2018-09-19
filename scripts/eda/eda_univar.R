@@ -52,7 +52,7 @@ stopCluster(cl)
 # =======================
 png(paste0("plots/", args, "/temp_lat.png"), width = 900, height = 900)
 grid.arrange(ensemble_plot(year, temp_m, "Year", paste("Global Mean", args), seq(2010, 2100, 10)), 
-             ensemble_plot(lat, lat_m, "Latitude", paste("Latitudinal Mean", args), seq(-90, 90, 30)))
+             ensemble_plot(lat, lat_m, "Latitude", paste("Longitudinal Mean", args), seq(-90, 90, 30)))
 dev.off()
 
 # Spatial Statistics.
