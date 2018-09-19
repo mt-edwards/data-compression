@@ -14,6 +14,7 @@
 # - 8) Simulated ensemble size.
 args = commandArgs(TRUE)
 args = c("TMQ", "TS", "U10", 5, 3, 0, 10, 28)
+pair = c(1, 2)
 
 # Load libraries.
 # =======================
@@ -41,8 +42,8 @@ load(file = paste0("data/", args[1], "/lat.R"))
 
 # Temporary subsetting.
 # =======================
-Y.joint = Y.joint[1:5, , , , 1:2]
-Y.indep = Y.indep[1:5, , , , 1:2]
+Y.joint = Y.joint[1:5, , , , pair]
+Y.indep = Y.indep[1:5, , , , pair]
 
 # Residuals.
 # ========================
@@ -56,8 +57,8 @@ C.indep = apply(aaply(R.indep, c(1, 3, 4), cross_cov), 2:3, mean); rm(R.indep)
 
 # Save NetCDF file.
 # ========================
-save_ncdf(C.joint, lon, lat, paste0(args[1], ".", args[2], ".cross_cor_joint.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R"), "ALL")
-save_ncdf(C.indep, lon, lat, paste0(args[1], ".", args[2], ".cross_cor_indep.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R"), "ALL")
+save_ncdf(C.joint, lon, lat, paste0(args[pair[1]], ".", args[pair[2]], ".cross_cor_joint.r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R"), "ALL")
+save_ncdf(C.indep, lon, lat, paste0(args[pair[1]], ".", args[pair[2]], ".cross_cor_indep.r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".R"), "ALL")
 
 # Clear workspace.
 # =======================
