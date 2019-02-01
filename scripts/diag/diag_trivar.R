@@ -13,11 +13,11 @@
 # - 7) Taper.
 # - 8) Simulated ensemble size.
 args = commandArgs(TRUE)
-args = c("TMQ", "TS", "U10", 5, 3, 0, 10, 5)
+args = c("TMQ", "TS", "U10", 5, 3, 0, 10, 28)
 
 # Libraries.
 # ========================
-package_names = c("tidyverse", "abind", "plyr")
+package_names = c("plyr", "tidyverse", "abind")
 lapply(package_names, library, character.only = TRUE)
 
 # Set Working Directory (bash scripts).
@@ -77,14 +77,14 @@ VarC23 = aaply(D[, , , , c(2, 3)], c(1, 3, 4), cross_cov, .progress = "text")
 
 # Cross-covariance plots.
 # ========================
-png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-cross_cov_plot_grid(VarC12, VarC12.indep, VarC12.joint, lat, lon, "Cross-covariance")
+png(paste0("plots/ALL/multi_cov.", args[1], ".", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
+cross_cov_plot_grid(VarC12, VarC12.indep, VarC12.joint, lat, lon, "Latitude", "Cross-covariance")
 dev.off()
-png(paste0("plots/ALL/multi_cov.", args[1], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-cross_cov_plot_grid(VarC13, VarC13.indep, VarC13.joint, lat, lon, "Cross-covariance")
+png(paste0("plots/ALL/multi_cov.", args[1], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
+cross_cov_plot_grid(VarC13, VarC13.indep, VarC13.joint, lat, lon, "Latitude", "Cross-covariance")
 dev.off()
-png(paste0("plots/ALL/multi_cov.", args[2], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 800, height = 800)
-cross_cov_plot_grid(VarC23, VarC23.indep, VarC23.joint, lat, lon, "Cross-covariance")
+png(paste0("plots/ALL/multi_cov.", args[2], ".", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
+cross_cov_plot_grid(VarC23, VarC23.indep, VarC23.joint, lat, lon, "Latitude", "Cross-covariance")
 dev.off()
 
 # Clear workspace.

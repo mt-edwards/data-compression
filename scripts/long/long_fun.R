@@ -78,13 +78,10 @@ full_Whittle_neg_log_like = function(pgram, pars, class) {
 
 # Longitudinal model fitting.
 # ========================
-long_fit = function(pgram, class) {
-  
-  # Number of parameters.
-  npars = ifelse(class == "bm", 3, 2)
-  
+long_fit = function(pgram, class, init) {
+
   # Return fitted model.
-  return(optim(par = rep(0, npars), fn = full_Whittle_neg_log_like, pgram = pgram, class = class, method = "Nelder-Mead"))
+  return(optim(par = init, fn = full_Whittle_neg_log_like, pgram = pgram, class = class, method = "Nelder-Mead"))
   
 }
 

@@ -17,7 +17,7 @@ args = c("TMQ", "TS", "U10", 5, 3, 0, 10, 28)
 
 # Load libraries.
 # =======================
-package_names = c("tidyverse", "parallel", "Hmisc", "RNetCDF", "plyr", "gridExtra")
+package_names = c("tidyverse", "parallel", "Hmisc", "RNetCDF", "plyr", "gridExtra", "abind")
 lapply(package_names, library, character.only = TRUE)
 
 # Set Working Directory (bash scripts).
@@ -80,25 +80,28 @@ stopCluster(cl)
 
 # Temporal and latitudinal statistics plot.
 # =======================
-png(paste0("plots/", args[1], "/temp_lat.", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
-grid.arrange(ensemble_plot(year, temp_m1, "Year", paste("Global Mean", args[1]), seq(2010, 2100, 10)), 
-             ensemble_plot(lat, lat_m1, "Latitude", paste("Longitudinal Mean", args[1]), seq(-90, 90, 30)))
+png(paste0("plots/", args[1], "/temp_lat.", args[1], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 400)
+grid.arrange(ensemble_plot(year, temp_m1, "Year", "Global Mean", seq(2010, 2100, 10)), 
+             ensemble_plot(lat, lat_m1, "Latitude", "Longitudinal Mean", seq(-90, 90, 30)),
+             layout_matrix = matrix(1:2, 1, 2))
 dev.off()
-png(paste0("plots/", args[2], "/temp_lat.", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
-grid.arrange(ensemble_plot(year, temp_m2, "Year", paste("Global Mean", args[2]), seq(2010, 2100, 10)), 
-             ensemble_plot(lat, lat_m2, "Latitude", paste("Longitudinal Mean", args[2]), seq(-90, 90, 30)))
+png(paste0("plots/", args[2], "/temp_lat.", args[2], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 400)
+grid.arrange(ensemble_plot(year, temp_m2 - 289.64, "Year", "Global Mean Annomoly", seq(2010, 2100, 10)), 
+             ensemble_plot(lat, lat_m2 - 289.64, "Latitude", "Longitudinal Mean Annomoly", seq(-90, 90, 30)),
+             layout_matrix = matrix(1:2, 1, 2))
 dev.off()
-png(paste0("plots/", args[3], "/temp_lat.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 900)
-grid.arrange(ensemble_plot(year, temp_m3, "Year", paste("Global Mean", args[3]), seq(2010, 2100, 10)), 
-             ensemble_plot(lat, lat_m3, "Latitude", paste("Longitudinal Mean", args[3]), seq(-90, 90, 30)))
+png(paste0("plots/", args[3], "/temp_lat.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), width = 900, height = 400)
+grid.arrange(ensemble_plot(year, temp_m3, "Year", "Global Mean", seq(2010, 2100, 10)), 
+             ensemble_plot(lat, lat_m3, "Latitude", "Longitudinal Mean", seq(-90, 90, 30)),
+             layout_matrix = matrix(1:2, 1, 2))
 dev.off()
 
 # Spatial Statistics.
 # ========================
 cl = makeCluster(detectCores() - 1)
-spat_p1 = apply(Y1[1, , , ], 2:3, spat_pars)
-spat_p2 = apply(Y2[1, , , ], 2:3, spat_pars)
-spat_p3 = apply(Y3[1, , , ], 2:3, spat_pars)
+spat_p1 = apply(Y1[1:3, , , ], 3:4, spat_pars)
+spat_p2 = apply(Y2[1:3, , , ], 3:4, spat_pars)
+spat_p3 = apply(Y3[1:3, , , ], 3:4, spat_pars)
 stopCluster(cl)
 
 # Spatial NetCDF File.
@@ -118,6 +121,40 @@ map2(alply(spat_p3, 1), c(paste0("intercept.", args[3], ".r", args[4], ".p", arg
                           paste0("std.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png"), 
                           paste0("auto-cov.", args[3], ".r", args[4], ".p", args[5], ".q", args[6], ".t", args[7], ".s", args[8], ".png")), 
      save_ncdf, lon = lon, lat = lat, args = args)
+
+
+# Residual arrays.
+# =======================
+R1 = aaply(Y1[1:3, , , ], 3:4, lm_res)
+R2 = aaply(Y2[1:3, , , ], 3:4, lm_res)
+R3 = aaply(Y3[1:3, , , ], 3:4, lm_res)
+
+# Lon ensemble arrays.
+# =======================
+R1_lon = abind(R1, abind(R1[dim(R1)[1], , , drop = FALSE], R1[-dim(R1)[1], ,], along = 1), rev.along = 0)
+R2_lon = abind(R2, abind(R2[dim(R2)[1], , , drop = FALSE], R2[-dim(R2)[1], ,], along = 1), rev.along = 0)
+R3_lon = abind(R3, abind(R3[dim(R3)[1], , , drop = FALSE], R3[-dim(R3)[1], ,], along = 1), rev.along = 0)
+
+# Lat ensemble arrays.
+# =======================
+R1_lat = abind(R1, abind(R1[, -1,], R1[, 1, , drop = FALSE], along = 2), rev.along = 0)
+R2_lat = abind(R2, abind(R2[, -1,], R2[, 1, , drop = FALSE], along = 2), rev.along = 0)
+R3_lat = abind(R3, abind(R3[, -1,], R3[, 1, , drop = FALSE], along = 2), rev.along = 0)
+
+cross_spat_p1 = apply(R1_lon, 1:2, cross_cor)
+cross_spat_p2 = apply(R2_lon, 1:2, cross_cor)
+cross_spat_p3 = apply(R3_lon, 1:2, cross_cor)
+cross_spat_q1 = apply(R1_lat, 1:2, cross_cor)
+cross_spat_q2 = apply(R2_lat, 1:2, cross_cor)
+cross_spat_q3 = apply(R3_lat, 1:2, cross_cor)
+
+save_ncdf(cross_spat_p1, lon, lat, "lon_cor_train", args)
+save_ncdf(cross_spat_p2, lon, lat, "lon_cor_train2", args)
+save_ncdf(cross_spat_p3, lon, lat, "lon_cor_train3", args)
+save_ncdf(cross_spat_q1, lon, lat, "lat_cor_train", args)
+save_ncdf(cross_spat_q2, lon, lat, "lat_cor_train2", args)
+save_ncdf(cross_spat_q3, lon, lat, "lat_cor_train3", args)
+
 
 # Clear workspace.
 # =======================

@@ -31,25 +31,25 @@ ensemble_plot = function(x, y, x_val, y_val, breaks) {
     xlab(x_val) +
     ylab(y_val) +
     scale_x_continuous(breaks = breaks) +
-    theme_minimal()
+    theme_minimal(base_size = 14)
   
 }
 
-# Auto-covariance.
+# Auto-correlation
 # ========================
-auto_cov = function(y) {
+auto_cor = function(y) {
   
   # Return auto-covariance.
-  mean((y[-1] - mean(y)) * (y[-length(y)] - mean(y)))
+  mean(y[-1] * y[-length(y)])
   
 }
 
-# Cross-covariance.
+# Cross-correlation
 # ========================
-cross_cov = function(y) {
+cross_cor = function(y) {
   
   # Return cross-covariance.
-  return(mean((y[, 1] - mean(y[, 1])) * (y[, 2] - mean(y[, 2]))))
+  mean(y[, 1] * y[, 2])
   
 }
 
@@ -58,13 +58,13 @@ cross_cov = function(y) {
 spat_pars = function(y) {
   
   # Linear model.
-  mod = lm(y ~ seq_along(y))
+  mod = lm(c(t(y)) ~ rep(seq_len(ncol(y)), nrow(y)))
   
   # Return parameters.
   return(c(intercept = unname(mod$coefficients[1]),
            trend     = unname(mod$coefficients[2]),
            std       = summary(mod)$sigma,
-           auto_cov  = auto_cov(mod$residuals)))
+           auto_cor  = auto_cor(scale(mod$residuals))))
 
 }
 
@@ -97,17 +97,14 @@ save_ncdf = function(var, lon, lat, name, args) {
   
 }
 
-# Linear model residuals.
+# Residuals.
 # ========================
 lm_res = function(y) {
   
-  # Linear model.
-  mod = lm(c(t(y)) ~ rep(seq(ncol(y)), nrow(y)))
-
-  # Return scaled residuals.
-  return(matrix(scale(mod$residuals), nrow(y), ncol(y), byrow = TRUE))
+  # Return residuals.
+  return(scale(lm(c(t(y)) ~ rep(seq_len(ncol(y)), nrow(y)))$residuals))
   
-} 
+}
 
 # Cross-covariance plot.
 # ========================

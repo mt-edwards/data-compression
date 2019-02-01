@@ -39,7 +39,7 @@ mcpgram = multi_pgram(utdnspec1, utdnspec2)
 # ========================
 mcpgram_df = tibble(Frequency        = rep(0:(dim(utdnspec1)[3] - 1) / dim(utdnspec1)[3], 2),
                     `Cross-spectrum` = unlist(mcpgram),
-                    CSMF             = c(Mod(mcsmf), Arg(mcsmf)),
+                    CSMF             = c(Mod(mcsmf), shift_arguments(Arg(mcsmf), -2)),
                     Type             = rep(c("Modulus", "Argument"), each = dim(utdnspec1)[3]))
 
 # Mean multivariate cross-periodogram plot.
@@ -50,7 +50,6 @@ g = ggplot(mcpgram_df) +
   facet_grid(Type ~ ., scales = "free") +
   scale_x_continuous(limits = c(0, 0.49)) +
   labs(main = "Test") +
-  ggtitle(paste(args[1], args[2], sep = " - ")) +
   theme_bw()
 
 # Save plot.
@@ -58,6 +57,6 @@ g = ggplot(mcpgram_df) +
 ggsave(paste0("mcpgram_plot.", args[1], ".", args[2], ".r", args[3], ".p", args[4], ".q", args[5], ".t", args[6], ".png"), 
        plot = g, path = paste0("plots/ALL"), width = 6, height = 8, units = "cm")
 
-# Clear workspace.
+ # Clear workspace.
 # ========================
 rm(list = ls())
